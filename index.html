@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heartopia Piano Simulator</title>
+    <meta name="description" content="A beautiful interactive piano simulator with multiple layouts and themes.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="app-title">
+                <span class="title-icon">🎹</span>
+                <span>Heartopia Piano Simulator</span>
+            </h1>
+            <div class="status-badge" id="status">
+                <span class="status-dot"></span>
+                <span>Loading Piano Sounds...</span>
+            </div>
+        </header>
+
+        <nav class="controls-bar">
+            <div class="control-group">
+                <label class="control-label" for="layoutSwitcher">Layout</label>
+                <div class="select-wrapper">
+                    <select id="layoutSwitcher">
+                        <option value="36">Full (36 Keys)</option>
+                        <option value="21">No Semi-Tones (21)</option>
+                        <option value="15">Simple (15 Keys)</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="langSwitcher">Language</label>
+                <div class="select-wrapper">
+                    <select id="langSwitcher">
+                        <option value="th">Thai (โด, เร, มี)</option>
+                        <option value="en_sol">English (Do, Re, Mi)</option>
+                        <option value="en_notes">English (C, D, E)</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="themeSwitcher">Theme</label>
+                <div class="select-wrapper">
+                    <select id="themeSwitcher">
+                        <option value="light">☀️ Light</option>
+                        <option value="dark">🌙 Dark</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                </div>
+            </div>
+        </nav>
+
+        <main class="keyboard-stage">
+            <div class="keyboard-container" id="keyboard"></div>
+        </main>
+
+        <footer class="app-footer">
+            <span>Press your keyboard keys to play — or click the keys!</span>
+        </footer>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
