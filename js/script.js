@@ -71,7 +71,7 @@ function buildKeyboard() {
                 let displayNum = solData.num;
                 if (midi < 60) displayNum = solData.num + '<span style="position:absolute; bottom:-2px; left:40%">.</span>';
                 else if (midi >= 72 && midi < 84) displayNum = '<span style="position:absolute; top:-6px; left:40%">.</span>' + solData.num;
-                else if (midi === 84) displayNum = '<span style="position:absolute; top:-10px; left:35%">&#8987;</span>' + solData.num;
+                else if (midi === 84) displayNum = '<span style="position:absolute; top:-6px; left:40%">.</span>' + solData.num;
 
                 keyDiv.innerHTML = `
                     <div class="key-num" style="position:relative">${displayNum}</div>
