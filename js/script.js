@@ -69,9 +69,9 @@ function buildKeyboard() {
                 const labelText = solData[currentLang];
 
                 let displayNum = solData.num;
-                if (midi < 60) displayNum = solData.num + '<span style="position:absolute; bottom:-2px; left:40%">.</span>';
-                else if (midi >= 72 && midi < 84) displayNum = '<span style="position:absolute; top:-6px; left:40%">.</span>' + solData.num;
-                else if (midi === 84) displayNum = '<span style="position:absolute; top:-6px; left:40%">.</span>' + solData.num;
+                if (midi < 60) displayNum = solData.num + '<span class="octave-dot dot-below">•</span>';
+                else if (midi >= 72 && midi < 84) displayNum = '<span class="octave-dot dot-above">•</span>' + solData.num;
+                else if (midi === 84) displayNum = '<span class="octave-dot dot-above dot-double">•<br>•</span>' + solData.num;
 
                 keyDiv.innerHTML = `
                     <div class="key-num" style="position:relative">${displayNum}</div>

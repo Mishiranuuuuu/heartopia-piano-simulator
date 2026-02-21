@@ -328,14 +328,14 @@ body {
 
 .key.white {
     width: 58px;
-    height: 70px;
+    height: 82px;
     background: var(--white-key-bg);
     border: 1px solid var(--white-key-border);
     border-radius: 14px;
     box-shadow: var(--white-key-shadow);
     margin: 0 5px;
     z-index: 1;
-    padding-top: 10px;
+    padding-top: 22px;
     transition: transform 0.08s ease-out,
         box-shadow 0.08s ease-out,
         background 0.08s ease-out;
@@ -412,6 +412,34 @@ body {
     font-weight: 700;
     line-height: 1;
     color: var(--white-key-text);
+}
+
+.octave-dot {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--white-key-text);
+    pointer-events: none;
+}
+
+.dot-above {
+    top: -4px;
+}
+
+.dot-below {
+    bottom: -6px;
+}
+
+.dot-double {
+    top: -12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    line-height: 0.7;
 }
 
 .key-label {
