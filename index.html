@@ -14,6 +14,7 @@
         rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.28/build/Midi.js"></script>
 
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -66,12 +67,82 @@
             </div>
         </nav>
 
+        <section class="midi-panel" id="midiPanel">
+            <div class="midi-panel-header">
+                <h2 class="midi-panel-title">
+                    <span class="midi-icon">🎵</span>
+                    <span>MIDI Auto-Play</span>
+                </h2>
+                <p class="midi-panel-subtitle">Upload a .mid file and watch it play automatically!</p>
+            </div>
+
+            <div class="midi-controls">
+                <div class="midi-upload-area" id="midiDropZone">
+                    <input type="file" id="midiFileInput" accept=".mid,.midi" hidden>
+                    <div class="upload-content" id="uploadContent">
+                        <span class="upload-icon">📂</span>
+                        <span class="upload-text">Drop a MIDI file here or <strong>click to browse</strong></span>
+                    </div>
+                    <div class="upload-loaded" id="uploadLoaded" style="display:none">
+                        <span class="loaded-icon">✅</span>
+                        <span class="loaded-name" id="midiFileName">song.mid</span>
+                        <button class="midi-clear-btn" id="midiClearBtn" title="Remove file">✕</button>
+                    </div>
+                </div>
+
+                <div class="midi-settings">
+                    <div class="midi-setting">
+                        <label class="control-label" for="midiSpeed">Speed</label>
+                        <div class="speed-control">
+                            <input type="range" id="midiSpeed" min="0.25" max="3" step="0.05" value="1">
+                            <span class="speed-value" id="speedValue">1.00x</span>
+                        </div>
+                    </div>
+                    <div class="midi-setting">
+                        <label class="control-label" for="midiCountdown">Countdown</label>
+                        <div class="select-wrapper">
+                            <select id="midiCountdown">
+                                <option value="0">None</option>
+                                <option value="3" selected>3 seconds</option>
+                                <option value="5">5 seconds</option>
+                                <option value="10">10 seconds</option>
+                            </select>
+                            <span class="select-arrow">▾</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="midi-actions">
+                    <button class="midi-play-btn" id="midiPlayBtn" disabled>
+                        <span class="play-icon">▶</span>
+                        <span>Play MIDI</span>
+                    </button>
+                    <button class="midi-stop-btn" id="midiStopBtn" style="display:none">
+                        <span class="stop-icon">⏹</span>
+                        <span>Stop</span>
+                    </button>
+                </div>
+
+                <div class="midi-status" id="midiStatus" style="display:none">
+                    <div class="midi-progress-bar">
+                        <div class="midi-progress-fill" id="midiProgressFill"></div>
+                    </div>
+                    <span class="midi-status-text" id="midiStatusText">Ready</span>
+                </div>
+
+                <div class="midi-countdown-overlay" id="countdownOverlay" style="display:none">
+                    <span class="countdown-number" id="countdownNumber">3</span>
+                </div>
+            </div>
+        </section>
+
         <main class="keyboard-stage">
             <div class="keyboard-container" id="keyboard"></div>
         </main>
 
         <footer class="app-footer">
-            <span>Press your keyboard keys to play — or click the keys!</span>
+            <span>Press your keyboard keys to play, click the keys, or upload a MIDI file! — Hold <kbd>Esc</kbd> to
+                emergency stop.</span>
         </footer>
     </div>
 

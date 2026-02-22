@@ -95,7 +95,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow-x: hidden;
     transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -540,5 +540,415 @@ body {
 
     .key-label {
         font-size: 0.6rem;
+    }
+}
+
+
+.midi-panel {
+    width: 100%;
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.1s;
+}
+
+.midi-panel-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.midi-panel-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.midi-icon {
+    font-size: 1.3rem;
+    animation: bounceKey 2.5s ease-in-out infinite;
+}
+
+.midi-panel-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.midi-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+}
+
+
+/* Upload Area */
+
+.midi-upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: transparent;
+    position: relative;
+}
+
+.midi-upload-area:hover,
+.midi-upload-area.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-icon {
+    font-size: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.midi-upload-area:hover .upload-icon {
+    transform: scale(1.15) translateY(-2px);
+}
+
+.upload-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.upload-text strong {
+    color: var(--accent);
+}
+
+.upload-loaded {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.loaded-icon {
+    font-size: 1.2rem;
+}
+
+.loaded-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.midi-clear-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.midi-clear-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+
+.midi-settings {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.midi-setting {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.speed-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-solid);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 6px 14px;
+    transition: all 0.25s ease;
+}
+
+.speed-control:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.speed-control input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent));
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.speed-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.speed-control input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.speed-control input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+    border: none;
+    cursor: pointer;
+}
+
+.speed-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 46px;
+    text-align: right;
+}
+
+
+.midi-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.midi-play-btn,
+.midi-stop-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 28px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.3px;
+}
+
+.midi-play-btn {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff;
+    box-shadow: 0 3px 0 #15803d, 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.midi-play-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 #15803d, 0 6px 18px rgba(34, 197, 94, 0.4);
+}
+
+.midi-play-btn:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #15803d;
+}
+
+.midi-play-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+}
+
+.midi-stop-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    box-shadow: 0 3px 0 #b91c1c, 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.midi-stop-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 #b91c1c, 0 6px 18px rgba(239, 68, 68, 0.4);
+}
+
+.midi-stop-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #b91c1c;
+}
+
+.play-icon,
+.stop-icon {
+    font-size: 0.85rem;
+}
+
+
+.midi-status {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+}
+
+.midi-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.midi-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), #a78bfa, #f472b6);
+    background-size: 200% 100%;
+    border-radius: 6px;
+    transition: width 0.15s ease-out;
+    animation: progressShimmer 2s linear infinite;
+}
+
+@keyframes progressShimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.midi-status-text {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+
+.midi-countdown-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.countdown-number {
+    font-family: 'Outfit', sans-serif;
+    font-size: 8rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent), #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: countdownPop 1s ease-out;
+    text-shadow: none;
+}
+
+@keyframes countdownPop {
+    0% {
+        transform: scale(2);
+        opacity: 0;
+    }
+
+    30% {
+        transform: scale(0.9);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: var(--surface-solid);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 1px 0 var(--border-color);
+}
+
+
+@media (max-width: 768px) {
+    .midi-panel {
+        padding: 18px 16px;
+        border-radius: 16px;
+    }
+
+    .midi-panel-title {
+        font-size: 1.15rem;
+    }
+
+    .midi-settings {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .midi-setting {
+        min-width: auto;
+    }
+
+    .midi-play-btn,
+    .midi-stop-btn {
+        padding: 10px 22px;
+        font-size: 0.85rem;
+    }
+
+    .countdown-number {
+        font-size: 5rem;
     }
 }
