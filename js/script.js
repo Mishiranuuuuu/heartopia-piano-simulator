@@ -114,8 +114,80 @@ document.getElementById('themeSwitcher').addEventListener('change', (e) => {
     document.documentElement.setAttribute('data-theme', e.target.value);
 });
 
+const MAX_POLYPHONY = 32;
+const activeVoices = [];
+let isRecoveringCtx = false;
+
+function stopVoice(voice) {
+    try {
+        if (voice.node && typeof voice.node.stop === 'function') {
+            voice.node.stop();
+        }
+    } catch (_) { }
+}
+
+function pruneVoices() {
+    const now = audioCtx.currentTime;
+    for (let i = activeVoices.length - 1; i >= 0; i--) {
+        if (now - activeVoices[i].startTime > 3) {
+            activeVoices.splice(i, 1);
+        }
+    }
+}
+
+async function recoverAudioContext() {
+    if (isRecoveringCtx) return;
+    isRecoveringCtx = true;
+    console.warn('[Audio] Recovering AudioContext...');
+    try {
+        for (const v of activeVoices) stopVoice(v);
+        activeVoices.length = 0;
+
+        if (audioCtx.state === 'closed') {
+            console.error('[Audio] AudioContext is closed. Please reload the page.');
+            isRecoveringCtx = false;
+            return;
+        }
+        await audioCtx.suspend();
+        await audioCtx.resume();
+        console.log('[Audio] AudioContext recovered, state:', audioCtx.state);
+    } catch (e) {
+        console.error('[Audio] Recovery failed:', e);
+    }
+    isRecoveringCtx = false;
+}
+
 function playNote(midiNote) {
-    if (grandPiano) grandPiano.play(midiNote, audioCtx.currentTime, { duration: 2.5, gain: 2.0 });
+    if (!grandPiano) return;
+
+    if (audioCtx.state === 'closed' || audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => recoverAudioContext());
+    }
+
+    pruneVoices();
+
+    for (let i = activeVoices.length - 1; i >= 0; i--) {
+        if (activeVoices[i].midiNote === midiNote) {
+            stopVoice(activeVoices[i]);
+            activeVoices.splice(i, 1);
+        }
+    }
+
+    while (activeVoices.length >= MAX_POLYPHONY) {
+        const oldest = activeVoices.shift();
+        stopVoice(oldest);
+    }
+
+    try {
+        const node = grandPiano.play(midiNote, audioCtx.currentTime, {
+            duration: 1.8,
+            gain: 1.5
+        });
+        activeVoices.push({ node, midiNote, startTime: audioCtx.currentTime });
+    } catch (e) {
+        console.warn('[Audio] playNote error, attempting recovery:', e);
+        recoverAudioContext();
+    }
 }
 
 window.addEventListener('keydown', (e) => {
@@ -285,6 +357,7 @@ midiSpeed.addEventListener('input', () => {
 
 midiPlayBtn.addEventListener('click', () => {
     if (!loadedMidi || isPlaying) return;
+    alert("It's recommended to refresh after playing a MIDI file since it will take a significant amount of your memory after playing a song.");
     startMidiPlayback();
 });
 
@@ -433,6 +506,9 @@ function emergencyStop() {
 }
 
 function releaseAllNotes() {
+    for (const v of activeVoices) stopVoice(v);
+    activeVoices.length = 0;
+
     for (const char of activeNotes) {
         const keyData = keyElements[char];
         if (keyData) keyData.element.classList.remove('active');
