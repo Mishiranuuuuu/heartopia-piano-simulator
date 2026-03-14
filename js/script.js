@@ -1,14 +1,33 @@
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let grandPiano;
+let steelDrum;
+let currentInstrument = 'piano';
 const statusBadge = document.getElementById('status');
 
+let instrumentsLoaded = { piano: false, steel_tongue_drum: false };
+
+function loadInstrument(name) {
+    if (typeof Soundfont === 'undefined') return Promise.reject('Soundfont not loaded');
+    const sfName = name === 'piano' ? 'acoustic_grand_piano' : 'steel_drums';
+    return Soundfont.instrument(audioCtx, sfName).then(function (inst) {
+        if (name === 'piano') { grandPiano = inst; instrumentsLoaded.piano = true; }
+        else { steelDrum = inst; instrumentsLoaded.steel_tongue_drum = true; }
+        return inst;
+    });
+}
+
+// Load piano first, then steel drum in background
 if (typeof Soundfont !== 'undefined') {
-    Soundfont.instrument(audioCtx, 'acoustic_grand_piano').then(function (piano) {
-        grandPiano = piano;
+    loadInstrument('piano').then(() => {
         statusBadge.innerHTML = '<span class="status-dot"></span><span>Simulator Ready!</span>';
         statusBadge.classList.add('ready');
+        // Load steel drum in background
+        return loadInstrument('steel_tongue_drum');
+    }).then(() => {
+        console.log('[Audio] Steel drum loaded');
     }).catch(e => {
-        statusBadge.innerHTML = '<span class="status-dot"></span><span>Error loading piano.</span>';
+        statusBadge.innerHTML = '<span class="status-dot"></span><span>Error loading sounds.</span>';
+        console.error('[Audio] Load error:', e);
     });
 }
 
@@ -39,6 +58,24 @@ const layouts = {
         [['77', 'n'], ['79', 'm'], ['81', ','], ['83', '.'], ['84', '/']]
     ]
 };
+
+// Steel Tongue Drum: 15 notes — uses same key layout as piano 15-key mode
+// 3 rows of 5, same keyboard keys: y,u,i,o,p / h,j,k,l,; / n,m,,,.,/
+const drumLayout = [
+    // Row 1 (top)
+    [['60', 'y'], ['62', 'u'], ['64', 'i'], ['65', 'o'], ['67', 'p']],
+    // Row 2 (middle)
+    [['69', 'h'], ['71', 'j'], ['72', 'k'], ['74', 'l'], ['76', ';']],
+    // Row 3 (bottom)
+    [['77', 'n'], ['79', 'm'], ['81', ','], ['83', '.'], ['84', '/']]
+];
+
+// Color palette for drum tongues — warm earthy/metallic tones
+const drumColors = [
+    '#D4A574', '#C49B6A', '#B8926A', '#A8845E', '#987654',
+    '#E8C89E', '#D4B08C', '#C4A07C', '#B4906C', '#A4805C',
+    '#F0D8B0', '#E0C8A0', '#D0B890', '#C0A880', '#B09870'
+];
 
 const container = document.getElementById('keyboard');
 let keyElements = {};
@@ -105,10 +142,103 @@ function buildKeyboard() {
     });
 }
 
+function buildDrumPad() {
+    container.innerHTML = '';
+    container.classList.add('drum-mode');
+    keyElements = {};
+    const currentLang = document.getElementById('langSwitcher').value;
+    let colorIndex = 0;
+
+    drumLayout.forEach((row, rowIndex) => {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'row drum-row';
+
+        row.forEach(([midiStr, char], keyIndex) => {
+            const midi = parseInt(midiStr);
+            const noteInOctave = midi % 12;
+            const solData = solfegeMap[noteInOctave];
+
+            const pad = document.createElement('div');
+            pad.className = 'drum-tongue';
+            pad.style.setProperty('--tongue-color', drumColors[colorIndex]);
+            pad.style.animationDelay = `${(rowIndex * 0.05) + (keyIndex * 0.03)}s`;
+
+            let labelText = solData ? (solData[currentLang] || solData.en_notes) : '';
+            const octave = Math.floor(midi / 12) - 1;
+            const noteName = solData ? solData.en_notes + octave : 'N' + midi;
+
+            pad.innerHTML = `
+                <div class="tongue-label">${labelText}</div>
+                <div class="tongue-note">${noteName}</div>
+                <div class="tongue-key">${char.toUpperCase()}</div>
+            `;
+
+            pad.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                pad.classList.add('active');
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                playNote(midi);
+            });
+            pad.addEventListener('mouseup', () => pad.classList.remove('active'));
+            pad.addEventListener('mouseleave', () => pad.classList.remove('active'));
+            pad.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                pad.classList.add('active');
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                playNote(midi);
+            }, { passive: false });
+            pad.addEventListener('touchend', () => pad.classList.remove('active'));
+
+            rowDiv.appendChild(pad);
+            keyElements[char] = { element: pad, midi: midi };
+            colorIndex++;
+        });
+        container.appendChild(rowDiv);
+    });
+}
+
+function switchInstrument() {
+    const instrument = document.getElementById('instrumentSwitcher').value;
+    currentInstrument = instrument;
+    const layoutGroup = document.getElementById('layoutGroup');
+    const titleIcon = document.getElementById('titleIcon');
+    const titleText = document.getElementById('titleText');
+
+    if (instrument === 'steel_tongue_drum') {
+        layoutGroup.style.display = 'none';
+        titleIcon.textContent = '\u{1F941}';
+        titleText.textContent = 'Heartopia Steel Tongue Drum';
+        container.classList.add('drum-mode');
+        buildDrumPad();
+
+        // Load steel drum if not yet loaded
+        if (!instrumentsLoaded.steel_tongue_drum) {
+            statusBadge.innerHTML = '<span class="status-dot"></span><span>Loading Drum Sounds...</span>';
+            statusBadge.classList.remove('ready');
+            loadInstrument('steel_tongue_drum').then(() => {
+                statusBadge.innerHTML = '<span class="status-dot"></span><span>Simulator Ready!</span>';
+                statusBadge.classList.add('ready');
+            });
+        }
+    } else {
+        layoutGroup.style.display = '';
+        titleIcon.textContent = '\u{1F3B9}';
+        titleText.textContent = 'Heartopia Piano Simulator';
+        container.classList.remove('drum-mode');
+        buildKeyboard();
+    }
+}
+
 buildKeyboard();
 
-document.getElementById('layoutSwitcher').addEventListener('change', buildKeyboard);
-document.getElementById('langSwitcher').addEventListener('change', buildKeyboard);
+document.getElementById('instrumentSwitcher').addEventListener('change', switchInstrument);
+document.getElementById('layoutSwitcher').addEventListener('change', () => {
+    if (currentInstrument === 'piano') buildKeyboard();
+});
+document.getElementById('langSwitcher').addEventListener('change', () => {
+    if (currentInstrument === 'piano') buildKeyboard();
+    else buildDrumPad();
+});
 
 document.getElementById('themeSwitcher').addEventListener('change', (e) => {
     document.documentElement.setAttribute('data-theme', e.target.value);
@@ -158,7 +288,8 @@ async function recoverAudioContext() {
 }
 
 function playNote(midiNote) {
-    if (!grandPiano) return;
+    const activeInst = currentInstrument === 'steel_tongue_drum' ? steelDrum : grandPiano;
+    if (!activeInst) return;
 
     if (audioCtx.state === 'closed' || audioCtx.state === 'suspended') {
         audioCtx.resume().catch(() => recoverAudioContext());
@@ -179,9 +310,11 @@ function playNote(midiNote) {
     }
 
     try {
-        const node = grandPiano.play(midiNote, audioCtx.currentTime, {
-            duration: 1.8,
-            gain: 1.5
+        const duration = currentInstrument === 'steel_tongue_drum' ? 3.0 : 1.8;
+        const gain = currentInstrument === 'steel_tongue_drum' ? 2.0 : 1.5;
+        const node = activeInst.play(midiNote, audioCtx.currentTime, {
+            duration: duration,
+            gain: gain
         });
         activeVoices.push({ node, midiNote, startTime: audioCtx.currentTime });
     } catch (e) {

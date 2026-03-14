@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heartopia Piano Simulator</title>
+    <title>Heartopia Music Simulator</title>
     <meta name="description" content="A beautiful interactive piano simulator with multiple layouts and themes.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,8 +23,8 @@
     <div class="app-container">
         <header class="app-header">
             <h1 class="app-title">
-                <span class="title-icon">🎹</span>
-                <span>Heartopia Piano Simulator</span>
+                <span class="title-icon" id="titleIcon">🎹</span>
+                <span id="titleText">Heartopia Piano Simulator</span>
             </h1>
             <div class="status-badge" id="status">
                 <span class="status-dot"></span>
@@ -34,6 +34,16 @@
 
         <nav class="controls-bar">
             <div class="control-group">
+                <label class="control-label" for="instrumentSwitcher">Instrument</label>
+                <div class="select-wrapper">
+                    <select id="instrumentSwitcher">
+                        <option value="piano">🎹 Piano</option>
+                        <option value="steel_tongue_drum">🥁 Steel Tongue Drum</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                </div>
+            </div>
+            <div class="control-group" id="layoutGroup">
                 <label class="control-label" for="layoutSwitcher">Layout</label>
                 <div class="select-wrapper">
                     <select id="layoutSwitcher">

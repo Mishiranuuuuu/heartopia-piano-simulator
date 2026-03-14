@@ -923,6 +923,139 @@ kbd {
 }
 
 
+/* ========================================
+   STEEL TONGUE DRUM STYLES
+   ======================================== */
+
+.keyboard-container.drum-mode {
+    display: flex;
+    flex-direction: column;
+}
+
+.drum-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 36px;
+    gap: 8px;
+}
+
+.drum-tongue {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 40% 35%, rgba(255, 255, 255, 0.28), transparent 60%),
+        linear-gradient(145deg, var(--tongue-color), color-mix(in srgb, var(--tongue-color), #000 22%));
+    box-shadow:
+        0 4px 0 color-mix(in srgb, var(--tongue-color), #000 40%),
+        0 6px 12px rgba(0, 0, 0, 0.2),
+        inset 0 2px 4px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        transform 0.08s ease-out,
+        box-shadow 0.08s ease-out,
+        filter 0.15s ease;
+    animation: tongueAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes tongueAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.5) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Hover */
+.drum-tongue:hover {
+    filter: brightness(1.12);
+    box-shadow:
+        0 4px 0 color-mix(in srgb, var(--tongue-color), #000 40%),
+        0 8px 20px rgba(212, 165, 116, 0.25),
+        inset 0 2px 4px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.12);
+}
+
+/* Active / hit */
+.drum-tongue.active {
+    transform: translateY(3px);
+    filter: brightness(1.3);
+    box-shadow:
+        0 1px 0 color-mix(in srgb, var(--tongue-color), #000 40%),
+        0 2px 6px rgba(0, 0, 0, 0.15),
+        inset 0 2px 4px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.12);
+}
+
+.drum-tongue.active::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 18px rgba(212, 165, 116, 0.5);
+    pointer-events: none;
+    animation: drumRipple 0.4s ease-out forwards;
+}
+
+@keyframes drumRipple {
+    0% {
+        box-shadow: 0 0 0 0 rgba(212, 165, 116, 0.5);
+        opacity: 1;
+    }
+    100% {
+        box-shadow: 0 0 0 16px rgba(212, 165, 116, 0);
+        opacity: 0;
+    }
+}
+
+.tongue-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    line-height: 1;
+}
+
+.tongue-note {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    margin-top: 2px;
+}
+
+.tongue-key {
+    position: absolute;
+    bottom: -18px;
+    background: linear-gradient(135deg, #6b5b4f, #8b7b6f);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 5px;
+    box-shadow: 0 2px 0 #4a3d33;
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+    z-index: 3;
+}
+
+
 @media (max-width: 768px) {
     .midi-panel {
         padding: 18px 16px;
@@ -951,4 +1084,18 @@ kbd {
     .countdown-number {
         font-size: 5rem;
     }
+
+    /* Drum responsive */
+    .drum-tongue {
+        width: 48px;
+        height: 48px;
+    }
+
+    .drum-row {
+        margin-bottom: 28px;
+        gap: 6px;
+    }
+
+    .tongue-label { font-size: 0.7rem; }
+    .tongue-note { font-size: 0.5rem; }
 }
