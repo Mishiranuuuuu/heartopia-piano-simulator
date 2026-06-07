@@ -522,6 +522,14 @@ body {
         width: 100%;
     }
 
+    .midi-setting {
+        width: 100%;
+    }
+
+    .midi-setting .select-wrapper {
+        align-self: stretch;
+    }
+
     .key.white {
         width: 44px;
         height: 56px;
@@ -546,6 +554,7 @@ body {
 
 .midi-panel {
     width: 100%;
+    max-width: 700px;
     background: var(--surface);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -690,8 +699,15 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    flex: 1;
     min-width: 160px;
+}
+
+.midi-setting .select-wrapper {
+    align-self: flex-start;
+}
+
+.midi-setting .select-wrapper select {
+    min-width: auto;
 }
 
 .speed-control {
